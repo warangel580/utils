@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "jest --colors --watchAll",
+    "dev": "jest --colors --watch",
     "test": "jest --colors",
     "coverage": "jest --colors --coverage"
   },

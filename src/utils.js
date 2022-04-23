@@ -1,13 +1,20 @@
-let isArray = (data) => {
-  return data instanceof Array;
-}
-
 let isNil = (data) => {
   return data === undefined || data === null;
 }
 
 let isFunction = (data) => {
   return typeof data === "function";
+}
+
+let isArray = (data) => {
+  return data instanceof Array;
+}
+
+let isObject = (data) => {
+  return ! isNil(data) 
+      && ! isArray(data)
+      && ! isFunction(data)
+      && typeof data === "object"
 }
 
 let reduce = (data, fn, initialValue) => {
@@ -100,9 +107,10 @@ let pipe = (data, fns) => {
 }
 
 module.exports = {
-  isArray,
   isNil,
   isFunction,
+  isArray,
+  isObject,
   reduce,
   transform,
   sort,
