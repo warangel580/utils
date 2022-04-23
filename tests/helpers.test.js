@@ -1,4 +1,4 @@
-const { pushLast, concat, merge, sort, entries, keys, values, size, or, get, set } = require('../src/utils')
+const { pushFirst, pushLast, popFirst, popLast, concat, merge, sort, entries, keys, values, size, or, get, set } = require('../src/utils')
 
 describe("entries", () => {
   it("returns an empty array with empty data", function () {
@@ -21,6 +21,25 @@ describe("entries", () => {
   });
 });
 
+describe("pushFirst", () => {
+  it("adds a value at the end of an array", function () {
+    let oldArray = ["a"];
+    let newArray = pushFirst(oldArray, "b");
+
+    expect(newArray).toStrictEqual(["b", "a"]);
+    expect(oldArray).toStrictEqual(["a"]);
+  });
+
+  it("creates an array with nil values", function () {
+    expect(pushFirst(null,      "a")).toStrictEqual(["a"]);
+    expect(pushFirst(undefined, "a")).toStrictEqual(["a"]);
+  });
+
+  it("uses multiple arguments", function () {
+    expect(pushFirst(["x"], "a", "b", "c")).toStrictEqual(["a", "b", "c", "x"]);
+  });
+});
+
 describe("pushLast", () => {
   it("adds a value at the end of an array", function () {
     let oldArray = ["a"];
@@ -34,7 +53,47 @@ describe("pushLast", () => {
     expect(pushLast(null,      "a")).toStrictEqual(["a"]);
     expect(pushLast(undefined, "a")).toStrictEqual(["a"]);
   });
+
+  it("uses multiple arguments", function () {
+    expect(pushLast(["x"], "a", "b", "c")).toStrictEqual(["x", "a", "b", "c"]);
+  });
 });
+
+describe("popFirst", () => {
+  it("gets head value + tail array", function () {
+    let oldArray     = ["a", "b", "c"];
+    let [head, tail] = popFirst(oldArray);
+
+    expect(head)    .toStrictEqual("a");
+    expect(tail)    .toStrictEqual(["b", "c"]);
+    expect(oldArray).toStrictEqual(["a", "b", "c"]);
+  });
+
+  it("returns empty data if array is empty or nil", function () {
+    expect(popFirst([]))       .toStrictEqual([undefined, []]);
+    expect(popFirst(null))     .toStrictEqual([undefined, []]);
+    expect(popFirst(undefined)).toStrictEqual([undefined, []]);
+  });
+});
+
+describe("popLast", () => {
+  it("gets tail value + body array", function () {
+    let oldArray = ["a", "b", "c"];
+    let [tail, body] = popLast(oldArray);
+
+    expect(tail)    .toStrictEqual("c");
+    expect(body)    .toStrictEqual(["a", "b"]);
+    expect(oldArray).toStrictEqual(["a", "b", "c"]);
+  });
+
+  it("returns empty data if array is empty or nil", function () {
+    expect(popLast([]))       .toStrictEqual([undefined, []]);
+    expect(popLast(null))     .toStrictEqual([undefined, []]);
+    expect(popLast(undefined)).toStrictEqual([undefined, []]);
+  });
+});
+
+// @TODO: slice ?
 
 describe("concat", () => {
   it("merges arrays together", function () {
@@ -82,12 +141,22 @@ describe("merge", () => {
   });
 
   it("merges object with callbacks", function () {
+    let o1 = { "a": 1, "price": 1 };
+    let o2 = { "b": 2, "price": 2 };
+    let o3 = { "c": 3, "price": 3 };
+
     expect(merge(
-      { "price": 1 }, { "price": 2 }, { "price": 3 },
-      (current, next) => {
-        return set(current, 'price', price => or(price, 0) + get(next, 'price', 0))
+      o1, o2, o3,
+      (total, current) => {
+        return set(merge(total, current), 'price', price => {
+          return get(total, 'price') + get(current, 'price');
+        })
       }
-    )).toStrictEqual({ "price": 6 });
+    )).toStrictEqual({ "a": 1, "b": 2, "c": 3, "price": 6 });
+
+    expect(o1).toStrictEqual({ "a": 1, "price": 1 });
+    expect(o2).toStrictEqual({ "b": 2, "price": 2 });
+    expect(o3).toStrictEqual({ "c": 3, "price": 3 });
   });
 });
 

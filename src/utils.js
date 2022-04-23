@@ -60,7 +60,7 @@ let filter = (data, fn) => {
     return data.filter(fn);
   }
 
-  if (isObject(data)) {
+  if (isIterable(data)) {
     return transform({}, data, (object, value, key) => {
       return fn(value, key, data)
         ? set(object, key, value)
@@ -72,11 +72,6 @@ let filter = (data, fn) => {
 }
 
 let each = function (data, fn) {
-  if (isArray(data)) {
-    data.forEach(fn);
-    return;
-  }
-
   return reduce(data, (_, value, key) => {
     fn(value, key, data);
   });
@@ -208,8 +203,25 @@ let entries = (data) => {
   });
 }
 
-let pushLast = (data, value) => {
-  return tap(or(copy(data), []), data => data.push(value));
+let pushFirst = (data, ...values) => {
+  return tap(or(copy(data), []), data => data.unshift(...values));
+}
+
+let pushLast = (data, ...values) => {
+  return tap(or(copy(data), []), data => data.push(...values));
+}
+
+let popFirst = (data) => {
+  return using(or(data, []), ([first, ...rest]) => {
+    return [first, rest];
+  });
+}
+
+let popLast = (data) => {
+  return using(or(copy(data), []), (data) => {
+    let tail = data.pop();
+    return [tail, data];
+  });
 }
 
 let concat = (...datas) => {
@@ -219,17 +231,17 @@ let concat = (...datas) => {
 }
 
 let merge = (...datas) => {
-  let fn = datas.pop();
+  let [fn, objects] = popLast(datas);
 
-  if (! isFunction(fn)) {
-    datas = pushLast(datas, fn);
-
-    fn = (current, next) => {
-      return Object.assign(current, next);
-    }
+  if (isFunction(fn)) {
+    let [object, otherObjects] = popFirst(objects);
+    
+    return transform(or(object, {}), otherObjects, fn);
   }
 
-  return transform({}, datas, fn);
+  return transform({}, datas, (current, next) => {
+    return Object.assign(current, next);
+  });
 }
 
 let sort = (data, fn) => { 
@@ -238,7 +250,7 @@ let sort = (data, fn) => {
   }
 
   return transform({}, tap(
-    Object.entries(data),
+    entries(data),
     entries => entries.sort(([k1, v1], [k2, v2]) => {
       return fn(v1, v2, k1, k2)
     })
@@ -286,7 +298,10 @@ module.exports = {
   keys,
   values,
   entries,
+  pushFirst,
   pushLast,
+  popFirst,
+  popLast,
   concat,
   merge,
   sort,
