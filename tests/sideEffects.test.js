@@ -2,7 +2,7 @@ const { tap, using, copy, clone , parseJson } = require('../src/utils')
 const sinon = require("sinon");
 
 describe("tap", () => {
-  test('it calls function with data as-is', () => {
+  it('calls function with data as-is', () => {
     let fn = sinon.fake();
 
     tap({ foo: "bar" }, fn);
@@ -10,14 +10,14 @@ describe("tap", () => {
     expect(fn.calledWith({ foo: "bar" })).toBe(true);
   })
 
-  test('it returns data without side-effect result', () => {
+  it('returns data without side-effect result', () => {
     expect(tap([], data => data.push(1))).toStrictEqual([1]);
     expect(tap({}, data => data.a = 1  )).toStrictEqual({a: 1});
   })
 });
 
 describe("using", () => {
-  test('it can call a function using named args', () => {
+  it('can call a function using named args', () => {
     let fn = sinon.fake();
 
     using(1, 2, { foo: "bar" }, fn);
@@ -25,7 +25,7 @@ describe("using", () => {
     expect(fn.calledWith(1, 2, { foo: "bar" })).toBe(true);
   })
 
-  test('it returns function result', () => {
+  it('returns function result', () => {
     expect(using(1 + 2, 3, (a, b) => a + b)).toBe(6);
   })
 });

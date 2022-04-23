@@ -1,10 +1,12 @@
-const { isNil, isArray, isObject, isFunction } = require('../src/utils')
+const { isNil, isArray, isObject, isIterable, isFunction } = require('../src/utils')
 
 describe("types", () => {
-  test('it checks if data is nil', () => {
+  it('checks if data is nil', () => {
     let expectations = [
       [null,          true],
       [undefined,     true],
+      [42,            false],
+      ["a",           false],
       [[],            false],
       [{},            false],
       [[1, 2],        false],
@@ -17,10 +19,12 @@ describe("types", () => {
     })
   })
   
-  test('it checks if data is an array', () => {
+  it('checks if data is an array', () => {
     let expectations = [
       [null,      false],
       [undefined, false],
+      [42,        false],
+      ["a",       false],
       [[],        true],
       [{},        false],
       [[1, 2],    true],
@@ -32,11 +36,31 @@ describe("types", () => {
       expect(isArray(value)).toStrictEqual(expected);
     })
   })
-  
-  test('it checks if data is an object', () => {
+
+  it('checks if data is iterable', () => {
     let expectations = [
       [null,      false],
       [undefined, false],
+      [42,        false],
+      ["a",       false],
+      [[],        true],
+      [{},        true],
+      [[1, 2],    true],
+      [{ a: 1 },  true],
+      [() => [],  false],
+    ];
+
+    expectations.forEach(([value, expected]) => {
+      expect(isIterable(value)).toStrictEqual(expected);
+    })
+  })
+  
+  it('checks if data is an object', () => {
+    let expectations = [
+      [null,      false],
+      [undefined, false],
+      [42,        false],
+      ["a",       false],
       [[],        false],
       [{},        true],
       [[1, 2],    false],
@@ -49,10 +73,12 @@ describe("types", () => {
     })
   })
   
-  test('it checks if data is a function', () => {
+  it('checks if data is a function', () => {
     let expectations = [
       [null,      false],
       [undefined, false],
+      [42,        false],
+      ["a",       false],
       [[],        false],
       [{},        false],
       [[1, 2],    false],

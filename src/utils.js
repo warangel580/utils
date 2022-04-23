@@ -19,6 +19,10 @@ let isObject = (data) => {
       && typeof data === "object"
 }
 
+let isIterable = (data) => {
+  return isArray(data) || isObject(data);
+}
+
 // ITERATORS
 
 let reduce = (data, fn, initialValue) => {
@@ -163,28 +167,50 @@ let or = (...values) => {
     if (value === undefined) return 0;
     if (value === null)      return 1;
     if (value === false)     return 2;
-    if (value === true)      return 3;
-    if (value === [])        return 4;
-    if (value === {})        return 5;
-    if (! value)             return 6;
-    if (value)               return 7;
+    // []
+    if (isArray (value) && size(value) === 0) return 3;
+    // {}
+    if (isObject(value) && size(value) === 0) return 3;
+    if (! value)             return 4;
+    if (value === true)      return 5;
+    if (value)               return 6;
   };
 
-  return tap(
-    values,
-    values => values.sort((v1, v2) => {
-      return rank(v2) - rank(v1);
-    })
-  )[0];
+  return sort(values, (v1, v2) => {
+    return rank(v2) - rank(v1);
+  })[0];
 }
 
-// Array helpers
+
+// Data helpers
+
+let keys = (data) => {
+  return transform([], data, (keys, _, key) => {
+    return pushLast(keys, key);
+  });
+}
+
+let values = (data) => {
+  return transform([], data, (keys, value) => {
+    return pushLast(keys, value);
+  });
+}
+
+let size = (data) => {
+  return isIterable(data)
+    ? get(keys(data), 'length')
+    : undefined;
+}
+
+let entries = (data) => {
+  return transform([], data, (entries, value, key) => {
+    return pushLast(entries, [key, value]);
+  });
+}
 
 let pushLast = (data, value) => {
-  return tap(or(data, []), data => data.push(value));
+  return tap(or(copy(data), []), data => data.push(value));
 }
-
-// @TODO: merge for objects with Object.assign ?
 
 let concat = (...datas) => {
   return transform([], datas, (data, d) => {
@@ -194,7 +220,7 @@ let concat = (...datas) => {
 
 let sort = (data, fn) => { 
   if (isArray(data)) {
-    return tap(data, data => data.sort(fn));
+    return tap(copy(data), data => data.sort(fn));
   }
 
   return transform({}, tap(
@@ -224,24 +250,37 @@ module.exports = {
   isFunction,
   isArray,
   isObject,
+  isIterable,
+
   reduce,
   transform,
   map,
   filter,
   each,
+  
   tap,
+  using,
   copy,
   clone,
   parseJson,
   toJson,
+  
   get,
   set,
 
-  using,
+  size,
+  keys,
+  values,
+  entries,
   pushLast,
   concat,
   sort,
   or,
+  // @TODO: merge for objects with Object.assign ?
+  
+  // NOT TESTED YET
   defer,
   pipe,
+
+  // @TODO: transduce ?
 }

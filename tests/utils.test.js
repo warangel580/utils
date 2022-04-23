@@ -1,6 +1,6 @@
 const { get, set, transform, sort, pushLast, concat, defer:_, pipe, or } = require('../src/utils')
 
-test('it can transform data', () => {
+it('can transform data', () => {
   let posts = [
     {
       username: "U1",
@@ -40,7 +40,7 @@ test('it can transform data', () => {
   });
 })
 
-test('it can join multiple data', () => {
+it('can join multiple data', () => {
   let productTags = {
     'P1': ['T1', 'T3'],
     'P2': ['T4', 'T8'],
@@ -66,7 +66,7 @@ test('it can join multiple data', () => {
   });
 })
 
-test('it can order objects', () => {
+it('can order objects', () => {
   let messages = [
     {emotes: {'<3': 2, ':D': 3}},
     {emotes: {'<3': 2, ':)': 3}},
