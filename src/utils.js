@@ -110,6 +110,12 @@ let tap = (data, fn) => {
   return data;
 }
 
+let using = (...values) => {
+  let fn = values.pop();
+
+  return fn(...values)
+}
+
 // Getters / Setters
 
 let _normalizePath = (path) => {
@@ -137,10 +143,16 @@ let get = (data, path, notFoundValue) => {
 }
 
 let set = (data, path, newValue) => {
-  return tap(or(data, {}), data => {
-    data[path] = isFunction(newValue)
-      ? newValue(data[path])
-      : newValue;
+  return using(copy(data), _normalizePath(path), (data, path) => {
+    if (path.length === 0) {
+      return isFunction(newValue) ? newValue(data) : newValue;
+    }
+  
+    return tap(or(data, {}), data => {
+      return using(path, ([head, ...tail]) => {
+        data[head] = set(data[head], tail, newValue);
+      });
+    });
   });
 }
 
@@ -222,9 +234,10 @@ module.exports = {
   clone,
   parseJson,
   toJson,
-
   get,
   set,
+
+  using,
   pushLast,
   concat,
   sort,
