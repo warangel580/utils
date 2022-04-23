@@ -1,4 +1,4 @@
-const { get, set, transform, sort, pushLast, concat, defer:_, pipe, or } = require('../src/utils.js')
+const { get, set, transform, sort, pushLast, concat, defer:_, pipe, or } = require('../src/utils')
 
 test('it can transform data', () => {
   let posts = [

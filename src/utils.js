@@ -1,3 +1,5 @@
+// TYPES
+
 let isNil = (data) => {
   return data === undefined || data === null;
 }
@@ -17,6 +19,8 @@ let isObject = (data) => {
       && typeof data === "object"
 }
 
+// ITERATORS
+
 let reduce = (data, fn, initialValue) => {
   if (isArray(data)) {
     return data.reduce(fn, initialValue)
@@ -33,15 +37,70 @@ let transform = (initialValue, data, fn) => {
   return reduce(data, fn, initialValue);
 }
 
-let get = (data, path, defaultValue) => {
-  return data[path] || defaultValue;
+let map = (data, fn) => {
+  if (isArray(data)) {
+    return data.map(fn);
+  }
+
+  if (isObject(data)) {
+    return transform({}, data, (object, value, key) => {
+      return set(object, key, fn(value, key, data));
+    });
+  }
+
+  return data;
 }
+
+let filter = (data, fn) => {
+  if (isArray(data)) {
+    return data.filter(fn);
+  }
+
+  if (isObject(data)) {
+    return transform({}, data, (object, value, key) => {
+      return fn(value, key, data)
+        ? set(object, key, value)
+        : object;
+    });
+  }
+
+  return data;
+}
+
+let each = function (data, fn) {
+  if (isArray(data)) {
+    data.forEach(fn);
+    return;
+  }
+
+  return reduce(data, (_, value, key) => {
+    fn(value, key, data);
+  });
+}
+
+// Side-effect
 
 let tap = (data, fn) => {
   fn(data);
 
   return data;
 }
+
+// Getters / Setters
+
+let get = (data, path, defaultValue) => {
+  return data[path] || defaultValue;
+}
+
+let set = (data, path, newValue) => {
+  return tap(or(data, {}), data => {
+    data[path] = isFunction(newValue)
+      ? newValue(data[path])
+      : newValue;
+  });
+}
+
+// Values helpers
 
 let or = (...values) => {
   let rank = (value) => {
@@ -63,17 +122,13 @@ let or = (...values) => {
   )[0];
 }
 
-let set = (data, path, newValue) => {
-  return tap(or(data, {}), data => {
-    data[path] = isFunction(newValue)
-      ? newValue(data[path])
-      : newValue;
-  });
-}
+// Array helpers
 
 let pushLast = (data, value) => {
   return tap(or(data, []), data => data.push(value));
 }
+
+// @TODO: merge for objects with Object.assign ?
 
 let concat = (...datas) => {
   return transform([], datas, (data, d) => {
@@ -96,6 +151,8 @@ let sort = (data, fn) => {
   });
 }
 
+// Functions
+
 let defer = (fn, ...args) => {
   return (data) => fn(data, ...args);
 }
@@ -113,6 +170,10 @@ module.exports = {
   isObject,
   reduce,
   transform,
+  map,
+  filter,
+  each,
+
   sort,
   get,
   set,
