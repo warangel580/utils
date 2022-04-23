@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "dev": "jest --colors --watchAll",
+    "test": "jest --colors",
+    "coverage": "jest --colors --coverage"
+  },
+  "devDependencies": {
+    "jest": "^27.5.1",
+    "sinon": "^13.0.2"
+  }
+}
