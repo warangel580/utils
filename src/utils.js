@@ -112,8 +112,28 @@ let tap = (data, fn) => {
 
 // Getters / Setters
 
-let get = (data, path, defaultValue) => {
-  return data[path] || defaultValue;
+let _normalizePath = (path) => {
+  if (path === "") return [];
+
+  return map(isArray(path) ? path : [ path ], part => {
+    if (part === null)      return "null";
+    if (part === undefined) return "undefined";
+    return part;
+  });
+}
+
+let get = (data, path, notFoundValue) => {
+  if (isNil(data)) return notFoundValue;
+
+  path = _normalizePath(path);
+
+  if (path.length === 0) {
+    return data;
+  }
+
+  let [head, ...tail] = path;
+
+  return get(data[head], tail, notFoundValue);
 }
 
 let set = (data, path, newValue) => {
