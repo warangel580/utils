@@ -1,4 +1,4 @@
-const { pushLast, concat, sort, entries, keys, values, size, or } = require('../src/utils')
+const { pushLast, concat, merge, sort, entries, keys, values, size, or, get, set } = require('../src/utils')
 
 describe("entries", () => {
   it("returns an empty array with empty data", function () {
@@ -56,6 +56,38 @@ describe("concat", () => {
 
   it("doesn't fail with nil values in-between", function () {
     expect(concat(["a"], undefined, null, ["b"])).toStrictEqual(["a", "b"]);
+  });
+});
+
+describe("merge", () => {
+  it("merges objects together", function () {
+    let oldObject = {"a": 1};
+    let newObject = merge(oldObject, {"b": 2});
+
+    expect(newObject).toStrictEqual({"a": 1, "b": 2});
+    expect(oldObject).toStrictEqual({"a": 1});
+  });
+
+  it("merges multiple arguments", function () {
+    expect(merge({"a": 1}, {"b": 2}, {"c": 3})).toStrictEqual({"a": 1, "b": 2, "c": 3});
+  });
+
+  it("creates an array with nil values", function () {
+    expect(merge(null, {"a": 1})).toStrictEqual({"a": 1});
+    expect(merge(undefined, {"a": 1})).toStrictEqual({"a": 1});
+  });
+
+  it("doesn't fail with nil values in-between", function () {
+    expect(merge({"a": 1}, undefined, null, {"b": 2})).toStrictEqual({"a": 1, "b": 2});
+  });
+
+  it("merges object with callbacks", function () {
+    expect(merge(
+      { "price": 1 }, { "price": 2 }, { "price": 3 },
+      (current, next) => {
+        return set(current, 'price', price => or(price, 0) + get(next, 'price', 0))
+      }
+    )).toStrictEqual({ "price": 6 });
   });
 });
 

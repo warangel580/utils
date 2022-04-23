@@ -218,6 +218,20 @@ let concat = (...datas) => {
   })
 }
 
+let merge = (...datas) => {
+  let fn = datas.pop();
+
+  if (! isFunction(fn)) {
+    datas = pushLast(datas, fn);
+
+    fn = (current, next) => {
+      return Object.assign(current, next);
+    }
+  }
+
+  return transform({}, datas, fn);
+}
+
 let sort = (data, fn) => { 
   if (isArray(data)) {
     return tap(copy(data), data => data.sort(fn));
@@ -274,9 +288,9 @@ module.exports = {
   entries,
   pushLast,
   concat,
+  merge,
   sort,
   or,
-  // @TODO: merge for objects with Object.assign ?
   
   // NOT TESTED YET
   defer,
