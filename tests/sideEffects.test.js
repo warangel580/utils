@@ -1,4 +1,4 @@
-const { tap, using, copy, clone , parseJson } = require('../src/utils')
+const { tap, using, copy, clone, tryCatch, parseJson } = require('../src/utils')
 const sinon = require("sinon");
 
 describe("tap", () => {
@@ -109,6 +109,20 @@ describe("clone", () => {
     values.forEach(value => {
       expect(clone(value)).toStrictEqual(value);
     });
+  });
+});
+
+describe("tryCatch", () => {
+  it("uses try result when everything goes well", function () {
+    expect(tryCatch(() => 42)).toStrictEqual(42);
+  });
+
+  it("uses catch value in case of errors", function () {
+    let boom = () => { throw 'BOOM' };
+
+    expect(tryCatch(boom)).toStrictEqual(undefined);
+    expect(tryCatch(boom, 42)).toStrictEqual(42);
+    expect(tryCatch(boom, err => err)).toStrictEqual("BOOM");
   });
 });
 

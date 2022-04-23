@@ -31,23 +31,20 @@ describe("defer", () => {
 describe("pipe", () => {
   it("transforms data using multiple functions", function () {
     let users = [
-      { name: "Jane", "age": 31 },
-      { name: "John", "age": 15 },
-      { name: "Mary", "age": 26 },
-      { name: "Fred", "age": 11 },
+      { name: "Jane", "age": 31, glasses: false },
+      { name: "John", "age": 15, glasses: true  },
+      { name: "Mary", "age": 26, glasses: true  },
+      { name: "Fred", "age": 11, glasses: false },
+      { name: "Paul", "age": 57, glasses: true  },
     ];
 
-    let isMajor = _(pipe, [
-      _(get, 'age', 0),
-      _((x, y) => x >= y, 18),
-    ]);
-
     expect(pipe(users, [
-      _(filter, isMajor),
+      _(filter, u => get(u, 'age', 0) >= 18),
+      _(filter, _(get, 'glasses', false)),
       _(map,    _(get, "name"))
     ])).toStrictEqual([
-      "Jane",
       "Mary",
+      "Paul"
     ]);
   });
 });

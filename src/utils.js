@@ -85,14 +85,20 @@ let copy = (data) => {
   return data;
 }
 
-let parseJson = (raw, defaultValue = {}) => {
-  if (isNil(raw)) return raw;
-
+let tryCatch = (tryFn, catchFn) => {
   try {
-    return JSON.parse(raw);
+    return tryFn();
   } catch (err) {
-    return defaultValue;
+    return isFunction(catchFn)
+      ? catchFn(err)
+      : catchFn;
   }
+}
+
+let parseJson = (raw, defaultValue = {}) => {
+  return ! isNil(raw)
+    ? tryCatch(() => JSON.parse(raw), defaultValue)
+    : raw;
 }
 
 let toJson = (data) => {
@@ -104,15 +110,15 @@ let clone = (data) => {
 }
 
 let tap = (data, fn) => {
-  fn(data);
-
-  return data;
+  fn(data); return data;
 }
 
 let using = (...values) => {
-  let fn = values.pop();
+  let fn = values.pop(); return fn(...values)
+}
 
-  return fn(...values)
+let debug = (data, ...args) => {
+  return tap(data, data => console.log(...args, data))
 }
 
 // Getters / Setters
@@ -266,9 +272,7 @@ let defer = (fn, ...args) => {
 }
 
 let pipe = (data, fns) => {
-  return transform(data, fns, (data, fn) => {
-    return fn(data);
-  });
+  return transform(data, fns, (data, fn) => fn(data));
 }
 
 module.exports = {
@@ -284,10 +288,12 @@ module.exports = {
   filter,
   each,
   
+  debug,
   tap,
   using,
   copy,
   clone,
+  tryCatch,
   parseJson,
   toJson,
   
@@ -307,9 +313,6 @@ module.exports = {
   sort,
   or,
   
-  // NOT TESTED YET
   defer,
   pipe,
-
-  // @TODO: transduce ?
 }

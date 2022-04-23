@@ -1,4 +1,4 @@
-const { get, set, transform, sort, pushLast, concat, defer:_, pipe, or } = require('../src/utils')
+const { get, set, reduce, transform, map, filter, entries, sort, pushLast, concat, defer:_, pipe, or } = require('../src/utils')
 
 it('can transform data', () => {
   let posts = [
@@ -76,23 +76,23 @@ it('can order objects', () => {
     {emotes: {':/': 1}},
   ]
 
-  let result = pipe({}, [
-    _(transform, messages, (emotes, message) => {
-      return transform(emotes, get(message, 'emotes', {}), (emotes, count, emote) => {
-        return set(emotes, emote, current => or(current, 0) + count)
+  let result = pipe(messages, [
+    _(map, _(get, 'emotes', {})),
+    _(reduce, (rank, emotes) => {
+      return transform(rank, emotes, (rank, count, emote) => {
+        return set(rank, emote, current => or(current, 0) + count)
       })
-    }),
-    _(sort, (v1, v2) => {
-      return v2 - v1;
-    })
+    }, {}),
+    _(sort, (v1, v2) => v2 - v1),
+    _(filter, v => v >= 3),
   ])
 
   // @NOTE: using Object.entries to ensure order
-  expect(Object.entries(result))
-    .toStrictEqual(Object.entries({
+  expect(entries(result))
+    .toStrictEqual(entries({
     '<3': 10,
     ':)': 7,
     ':D': 5,
-    ':/': 1,
+    // ':/': 1,
   }));
 })
