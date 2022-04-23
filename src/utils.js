@@ -80,6 +80,30 @@ let each = function (data, fn) {
 
 // Side-effect
 
+let copy = (data) => {
+  if (isArray (data)) return data.slice(0);
+  if (isObject(data)) return Object.assign({}, data);
+  return data;
+}
+
+let parseJson = (raw, defaultValue = {}) => {
+  if (isNil(raw)) return raw;
+
+  try {
+    return JSON.parse(raw);
+  } catch (err) {
+    return defaultValue;
+  }
+}
+
+let toJson = (data) => {
+  return JSON.stringify(data);
+}
+
+let clone = (data) => {
+  return parseJson(toJson(data))
+}
+
 let tap = (data, fn) => {
   fn(data);
 
@@ -173,14 +197,18 @@ module.exports = {
   map,
   filter,
   each,
+  tap,
+  copy,
+  clone,
+  parseJson,
+  toJson,
 
-  sort,
   get,
   set,
-  tap,
-  or,
   pushLast,
   concat,
+  sort,
+  or,
   defer,
   pipe,
 }
