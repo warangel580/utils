@@ -1,5 +1,40 @@
-const { map, filter, get, defer:_, pipe } = require('../src/utils');
+const { map, filter, get, call, defer:_, pipe } = require('../src/utils');
 const sinon = require("sinon");
+
+describe("call", () => {
+  it("calls a method on classes with all args", function () {
+    let callback = sinon.fake();
+    
+    class SomeClass {
+      someMethod(...args) {
+        callback(...args)
+      }
+    }
+
+    call(new SomeClass, 'someMethod', 'arg0', 'arg1', 'arg2', 'arg3');
+
+    expect(callback.calledWith("arg0", "arg1", "arg2", "arg3")).toBe(true);
+  });
+
+  it("calls a method on classes", function () {
+    class Counter {
+      constructor(initialValue) {
+        this.count = initialValue;
+      }
+
+      add(n) {
+        this.count += n;
+        return this;
+      }
+    }
+
+    expect(call(new Counter(1), 'add', 2)).toStrictEqual(new Counter(3));
+  });
+
+  it("calls existing methods on Array", function () {
+    expect(call(["a", "b", "c", "d", "e"], 'slice', -2)).toStrictEqual(["d", "e"])
+  })
+})
 
 describe("defer", () => {
   it("creates a partial function that can be called with data", function () {

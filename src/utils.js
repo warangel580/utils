@@ -182,6 +182,10 @@ let or = (...values) => {
   })[0];
 }
 
+let call = (data, fnName, ...args) => {
+  return data[fnName](...args);
+}
+
 
 // Data helpers
 
@@ -304,15 +308,20 @@ module.exports = {
   keys,
   values,
   entries,
+
   pushFirst,
   pushLast,
   popFirst,
   popLast,
+  
   concat,
   merge,
-  sort,
-  or,
   
+  sort,
+  
+  or,
+  call,
+
   defer,
   pipe,
 }
