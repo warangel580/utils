@@ -1,4 +1,14 @@
 {
+  "name": "@warangel580/utils",
+  "description": "Common operations on data without side-effects",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "src/utils.js",
+  "repository": "github:warangel580/utils",
+  "homepage": "https://github.com/warangel580/utils",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "dev": "jest --colors --watch",
     "test": "jest --colors",
