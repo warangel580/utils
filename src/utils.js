@@ -227,6 +227,23 @@ let concat = (...datas) => {
   })
 }
 
+let _partition = (n, data) => {
+  if (! size(data)) return [];
+
+  return concat(
+    [data.slice(0, n)],
+    _partition(n, data.slice(n))
+  );
+}
+
+let partition = (data, n, ...datas) => {
+  return _partition(n, concat(data, ...datas));
+}
+
+let toPairs = (...datas) => {
+  return _partition(2, concat(...datas));
+}
+
 // Object helpers
 
 let merge = (...datas) => {
@@ -244,6 +261,34 @@ let merge = (...datas) => {
 }
 
 // Values helpers
+
+let when = (...kvs) => {
+  return transform(undefined, toPairs(kvs), (result, [condition, value]) => {
+    if (result !== undefined) return result;
+
+    return (isFunction(condition) ? condition() : condition)
+      ? value
+      : result;
+  });
+}
+
+let match = (value, ...kvs) => {
+  let matching = (pattern, key, value) => {
+    if (value === undefined) return true;
+
+    return isFunction(key)
+      ? key(pattern)
+      : toJson(key) === toJson(pattern);
+  }
+
+  let pairs = map(toPairs(kvs), ([k, v]) => {
+    return [() => matching(value, k, v), v === undefined ? k : v];
+  });
+
+  return when(...transform([], pairs, (kvs, [key, value]) => {
+    return pushLast(kvs, key, value);
+  }))
+}
 
 let or = (...values) => {
   let rank = (value) => {
@@ -323,12 +368,16 @@ module.exports = {
   popFirst,
   popLast,
   concat,
+  partition,
+  toPairs,
 
   // Object helpers
   merge,
   
   // Values helper
   or,
+  when,
+  match,
 
   // Functions
   using,

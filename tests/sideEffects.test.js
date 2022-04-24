@@ -1,4 +1,4 @@
-const { tap, using, copy, clone, tryCatch, parseJson } = require('../src/utils')
+const { tap, using, copy, clone, tryCatch, parseJson, debug } = require('../src/utils')
 const sinon = require("sinon");
 
 describe("tap", () => {
@@ -137,5 +137,15 @@ describe("parseJson", () => {
 
   it("uses defaultValue if json is invalid", function () {
     expect(parseJson("{invalid}", 42)).toStrictEqual(42);
+  });
+});
+
+describe("debug", () => {
+  it("returns data and prints it", function () {
+    console.log = sinon.fake();
+
+    expect(debug(42, "my", "value")).toStrictEqual(42);
+
+    expect(console.log.calledWith("my", "value", 42)).toBe(true);
   });
 });
