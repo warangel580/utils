@@ -1,4 +1,4 @@
-// TYPES
+// Types
 
 let isNil = (data) => {
   return data === undefined || data === null;
@@ -23,7 +23,7 @@ let isIterable = (data) => {
   return isArray(data) || isObject(data);
 }
 
-// ITERATORS
+// Iterators
 
 let reduce = (data, fn, initialValue) => {
   if (isArray(data)) {
@@ -77,7 +77,7 @@ let each = function (data, fn) {
   });
 }
 
-// Side-effect
+// Side-effects
 
 let copy = (data) => {
   if (isArray (data)) return data.slice(0);
@@ -111,10 +111,6 @@ let clone = (data) => {
 
 let tap = (data, fn) => {
   fn(data); return data;
-}
-
-let using = (...values) => {
-  let fn = values.pop(); return fn(...values)
 }
 
 let debug = (data, ...args) => {
@@ -161,32 +157,6 @@ let set = (data, path, newValue) => {
   });
 }
 
-// Values helpers
-
-let or = (...values) => {
-  let rank = (value) => {
-    if (value === undefined) return 0;
-    if (value === null)      return 1;
-    if (value === false)     return 2;
-    // []
-    if (isArray (value) && size(value) === 0) return 3;
-    // {}
-    if (isObject(value) && size(value) === 0) return 3;
-    if (! value)             return 4;
-    if (value === true)      return 5;
-    if (value)               return 6;
-  };
-
-  return sort(values, (v1, v2) => {
-    return rank(v2) - rank(v1);
-  })[0];
-}
-
-let call = (data, fnName, ...args) => {
-  return data[fnName](...args);
-}
-
-
 // Data helpers
 
 let keys = (data) => {
@@ -212,6 +182,23 @@ let entries = (data) => {
     return pushLast(entries, [key, value]);
   });
 }
+
+let sort = (data, fn) => {
+  if (isArray(data)) {
+    return tap(copy(data), data => data.sort(fn));
+  }
+
+  return transform({}, tap(
+    entries(data),
+    entries => entries.sort(([k1, v1], [k2, v2]) => {
+      return fn(v1, v2, k1, k2)
+    })
+  ), (data, [key, value]) => {
+    return set(data, key, value);
+  });
+}
+
+// Array helpers
 
 let pushFirst = (data, ...values) => {
   return tap(or(copy(data), []), data => data.unshift(...values));
@@ -240,12 +227,14 @@ let concat = (...datas) => {
   })
 }
 
+// Object helpers
+
 let merge = (...datas) => {
   let [fn, objects] = popLast(datas);
 
   if (isFunction(fn)) {
     let [object, otherObjects] = popFirst(objects);
-    
+
     return transform(or(object, {}), otherObjects, fn);
   }
 
@@ -254,22 +243,36 @@ let merge = (...datas) => {
   });
 }
 
-let sort = (data, fn) => { 
-  if (isArray(data)) {
-    return tap(copy(data), data => data.sort(fn));
-  }
+// Values helpers
 
-  return transform({}, tap(
-    entries(data),
-    entries => entries.sort(([k1, v1], [k2, v2]) => {
-      return fn(v1, v2, k1, k2)
-    })
-  ), (data, [key, value]) => {
-    return set(data, key, value);
-  });
+let or = (...values) => {
+  let rank = (value) => {
+    if (value === undefined) return 0;
+    if (value === null)      return 1;
+    if (value === false)     return 2;
+    // []
+    if (isArray (value) && size(value) === 0) return 3;
+    // {}
+    if (isObject(value) && size(value) === 0) return 3;
+    if (! value)             return 4;
+    if (value === true)      return 5;
+    if (value)               return 6;
+  };
+
+  return sort(values, (v1, v2) => {
+    return rank(v2) - rank(v1);
+  })[0];
 }
 
 // Functions
+
+let using = (...values) => {
+  let fn = values.pop(); return fn(...values)
+}
+
+let call = (data, fnName, ...args) => {
+  return data[fnName](...args);
+}
 
 let defer = (fn, ...args) => {
   return (data) => fn(data, ...args);
@@ -280,48 +283,56 @@ let pipe = (data, fns) => {
 }
 
 module.exports = {
+  // Types
   isNil,
   isFunction,
   isArray,
   isObject,
   isIterable,
 
+  // Iterators
   reduce,
   transform,
   map,
   filter,
   each,
   
+  // Side-effects
   debug,
   tap,
-  using,
   copy,
   clone,
   tryCatch,
   parseJson,
   toJson,
   
+  // Getters - Setters
   get,
   set,
 
+  // Data helpers
   size,
   keys,
   values,
   entries,
+  sort,
 
+  // Array helpers
   pushFirst,
   pushLast,
   popFirst,
   popLast,
-  
   concat,
+
+  // Object helpers
   merge,
   
-  sort,
-  
+  // Values helper
   or,
-  call,
 
+  // Functions
+  using,
+  call,
   defer,
   pipe,
 }
