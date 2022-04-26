@@ -3,11 +3,11 @@
   "description": "Common operations on data without side-effects",
   "version": "0.0.1",
   "license": "MIT",
+  "author": "warangel580",
   "main": "src/utils.js",
-  "repository": "github:warangel580/utils",
-  "homepage": "https://github.com/warangel580/utils",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/warangel580/utils.git"
   },
   "scripts": {
     "dev": "jest --colors --watch",
@@ -17,5 +17,12 @@
   "devDependencies": {
     "jest": "^27.5.1",
     "sinon": "^13.0.2"
+  },
+  "bugs": {
+    "url": "https://github.com/warangel580/utils/issues"
+  },
+  "homepage": "https://github.com/warangel580/utils#readme",
+  "directories": {
+    "test": "tests"
   }
 }
