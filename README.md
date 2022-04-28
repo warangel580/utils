@@ -312,45 +312,101 @@ Note that object order is "temporary" (not enforced by javascript) but still use
 sort({a:1, b:7, c:4}, (v1, v2) => v2 - v1) // => {b:7, c:4, a:1}
 ```
 
-### Arrays
+## Arrays
 
-TODO
+### `pushLast(data, ...values)`
 
-pushFirst
+Pure version of `Array.push`
 
-pushLast
+```js
+pushLast(["a"], "b", "c") // => ["a", "b", "c"]
+```
 
-popFirst
+### `pushFirst(data, ...values)`
 
-popLast
+Pure version of `Array.unshift`
 
-concat
+```js
+pushFirst(["a"], "b", "c") // => ["b", "c", "a"]
+```
 
-partition
+### `popFirst(data)`
 
-toPairs
+Pure version of `Array.pop`, returns `[firstElement, ...otherElements]`
 
+```js
+popFirst(["a", "b", "c"]) // => ["a", ["b", "c"]]
+```
 
-### Objects
+### `popLast(data)`
 
-merge
+Pure version of `Array.shift`, returns `[...elements, lastElement]`
 
+```js
+popLast(["a", "b", "c"]) // => [["a", "b"], "c"]
+```
 
-### Values
+### `concat(...datas)`
 
-or
+Return all arrays concatenated
 
-when
+```js
+concat(["a", "b"], ["c", "d"], ["e"]) // => ["a", "b", "c", "d", "e"]
+```
 
-match
+### `partition(data, n, ...datas)`
 
+Concats arrays then cut them in n-sized arrays
 
-### Function
+```js
+concat(["1", "2"], 3, ["3", "4"], ["5"], ["6"]) // => [["1", "2", "3"], ["4", "5", "6"]]
+```
 
-using
+### `toPairs(...datas)`
 
-call
+Returns a partition of size 2, useful for making pairs.
 
-defer
+```js
+toPairs(["1", "2"], ["3", "4"], ["5"], ["6"]) // => [["1", "2"], ["3", "4"], ["5", "6"]]
+```
 
-pipe
+## Objects
+
+### `merge(...datas, fn?)`
+
+Merge objects with Object.assign or `fn(current, next)` if given
+
+```js
+merge({a:1}, {b:2}, {b:3, c:4}) // => {a:1, b:3, c:4}
+merge({b:1}, {b:2}, {b:3}, (current, next) => {
+  return transform(current, next, (v, k) => {
+    return get(current, k, 0) + v;
+  });
+}) // {b: 6}
+```
+
+## Values
+
+### `or(...datas)`
+
+Returns the "most truthy" value given, useful for default values
+
+```js
+or(undefined, [])          // => []
+or({a: 1},    {})          // => {}
+or(undefined, null, "foo") // => "foo"
+```
+
+### `when(...kvs)`
+
+### `match(data, kvs)`
+
+## Functions
+
+### `using(...values)`
+
+### `call(data, fnName, ...args)`
+
+### `defer(fn, ...args)`
+
+### `pipe(data, fns)`
