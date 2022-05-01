@@ -1,4 +1,5 @@
-const { keys, values, entries, size, sort } = require('../src/utils')
+const { keys, values, entries, size, sort, randomIn, randomEntryIn, randomKeyIn } = require('../src/utils')
+const sinon = require("sinon");
 
 describe("keys", () => {
   it("returns array indexes", function () {
@@ -86,5 +87,67 @@ describe("sort", () => {
 
     expect(entries(newObject)).toStrictEqual(entries({b: 7, c: 5, a: 3}));
     expect(entries(oldObject)).toStrictEqual(entries({a: 3, b: 7, c: 5}));
+  });
+});
+
+describe("randomIn", () => {
+  it("gets a random value in data", function () {
+    let array  = [1, 2, 3];
+    let object = {a: 1, b: 2, c: 3};
+
+    expect(array.includes(randomIn(array))) .toStrictEqual(true)
+    expect(array.includes(randomIn(object))).toStrictEqual(true)
+  });
+
+  it("returns undefined if data is not iterable or empty", function () {
+    expect(randomIn([]))       .toStrictEqual(undefined);
+    expect(randomIn(42))       .toStrictEqual(undefined);
+    expect(randomIn("string")) .toStrictEqual(undefined);
+    expect(randomIn(null))     .toStrictEqual(undefined);
+    expect(randomIn(undefined)).toStrictEqual(undefined);
+  });
+});
+
+describe("randomEntryIn", () => {
+  it("gets a random entry in data", function () {
+    let array =  [1, 2, 3];
+    let object = {a: 1, b: 2, c: 3};
+
+    let arrayEntry = randomEntryIn(array);
+    expect(array[arrayEntry[0]]).toStrictEqual(arrayEntry[1])
+
+    let objectEntry = randomEntryIn(object);
+    expect(object[objectEntry[0]]).toStrictEqual(objectEntry[1])
+  });
+
+  it("returns undefined if data is not iterable or empty", function () {
+    expect(randomEntryIn([])).toStrictEqual(undefined);
+    expect(randomEntryIn(42)).toStrictEqual(undefined);
+    expect(randomEntryIn("string")).toStrictEqual(undefined);
+    expect(randomEntryIn(null)).toStrictEqual(undefined);
+    expect(randomEntryIn(undefined)).toStrictEqual(undefined);
+  });
+});
+
+describe("randomKeyIn", () => {
+  it("gets a random key in data", function () {
+    let array = [1, 2, 3];
+    let object = { a: 1, b: 2, c: 3 };
+
+    let arrayKey = randomKeyIn(array);
+    expect([0, 1, 2].includes(arrayKey))       .toStrictEqual(true)
+    expect([1, 2, 3].includes(array[arrayKey])).toStrictEqual(true)
+
+    let objectKey = randomKeyIn(object);
+    expect(['a', 'b', 'c'].includes(objectKey))        .toStrictEqual(true)
+    expect([1, 2, 3]      .includes(object[objectKey])).toStrictEqual(true)
+  });
+
+  it("returns undefined if data is not iterable or empty", function () {
+    expect(randomKeyIn([])).toStrictEqual(undefined);
+    expect(randomKeyIn(42)).toStrictEqual(undefined);
+    expect(randomKeyIn("string")).toStrictEqual(undefined);
+    expect(randomKeyIn(null)).toStrictEqual(undefined);
+    expect(randomKeyIn(undefined)).toStrictEqual(undefined);
   });
 });

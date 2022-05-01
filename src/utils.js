@@ -198,6 +198,26 @@ let sort = (data, fn) => {
   });
 }
 
+let randomEntryIn = (data) => {
+  let n = size(data);
+
+  if (! n) return undefined;
+
+  return get(
+    entries(data),
+    Math.floor(Math.random() * n)
+    // TODO: lerp(Math.random(), 0, 1, 0, n)
+  );
+}
+
+let randomIn = (data) => {
+  return get(randomEntryIn(data), 1);
+}
+
+let randomKeyIn = (data) => {
+  return get(randomEntryIn(data), 0);
+}
+
 // Array helpers
 
 let pushFirst = (data, ...values) => {
@@ -365,6 +385,9 @@ module.exports = {
   values,
   entries,
   sort,
+  randomIn,
+  randomKeyIn,
+  randomEntryIn,
 
   // Array helpers
   pushFirst,

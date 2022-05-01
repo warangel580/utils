@@ -302,6 +302,43 @@ let data = {a: 1, b: {x: 2, y: [3, 4]}, c: ['foo', 'bar']};
 entries(data) // => [['a', 1], ['b', {x: 2, y: [3,4]}], ['c', ['foo', 'bar']]]
 ```
 
+
+### `randomIn(data)`
+
+Get a random `value` in `data`
+
+```js
+// Results may vary ;)
+randomIn([1, 2, 3])          // => 3
+randomIn([1, 2, 3])          // => 2
+randomIn({a: 1, b: 2, c: 3}) // => 1
+randomIn({a: 1, b: 2, c: 3}) // => 3
+```
+
+### `randomEntryIn(data)`
+
+Get a random `[key, value]` in `data`
+
+```js
+// Results may vary ;)
+randomEntryIn([1, 2, 3])          // => [2, 3]
+randomEntryIn([1, 2, 3])          // => [1, 2]
+randomEntryIn({a: 1, b: 2, c: 3}) // => ['a', 1]
+randomEntryIn({a: 1, b: 2, c: 3}) // => ['c', 3]
+```
+
+### `randomKeyIn(data)`
+
+Get a random `value` in `data`
+
+```js
+// Results may vary ;)
+randomIn([1, 2, 3])          // => 2
+randomIn([1, 2, 3])          // => 0
+randomIn({a: 1, b: 2, c: 3}) // => 'a'
+randomIn({a: 1, b: 2, c: 3}) // => 'c'
+```
+
 ### `sort(data, comparator)`
 
 Sort data (without side-effects), like `Array.sort()`.
