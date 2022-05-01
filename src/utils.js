@@ -262,6 +262,29 @@ let merge = (...datas) => {
 
 // Values helpers
 
+let or = (...values) => {
+  let rank = (value) => {
+    if (value === undefined) return 0;
+    if (value === null) return 1;
+    if (value === false) return 2;
+    // []
+    if (isArray(value) && size(value) === 0) return 3;
+    // {}
+    if (isObject(value) && size(value) === 0) return 3;
+    if (!value) return 4;
+    if (value === true) return 5;
+    if (value) return 6;
+  };
+
+  return sort(values, (v1, v2) => {
+    return rank(v2) - rank(v1);
+  })[0];
+}
+
+let range = (size) => {
+  return [...Array(size).keys()];
+}
+
 let when = (...kvs) => {
   return transform(undefined, toPairs(kvs), (result, [condition, value]) => {
     if (result !== undefined) return result;
@@ -288,25 +311,6 @@ let match = (value, ...kvs) => {
   return when(...transform([], pairs, (kvs, [key, value]) => {
     return pushLast(kvs, key, value);
   }))
-}
-
-let or = (...values) => {
-  let rank = (value) => {
-    if (value === undefined) return 0;
-    if (value === null)      return 1;
-    if (value === false)     return 2;
-    // []
-    if (isArray (value) && size(value) === 0) return 3;
-    // {}
-    if (isObject(value) && size(value) === 0) return 3;
-    if (! value)             return 4;
-    if (value === true)      return 5;
-    if (value)               return 6;
-  };
-
-  return sort(values, (v1, v2) => {
-    return rank(v2) - rank(v1);
-  })[0];
 }
 
 // Functions
@@ -376,8 +380,9 @@ module.exports = {
   
   // Values helper
   or,
-  when,
+  range,
   match,
+  when,
 
   // Functions
   using,

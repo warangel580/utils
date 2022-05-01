@@ -397,16 +397,64 @@ or({a: 1},    {})          // => {}
 or(undefined, null, "foo") // => "foo"
 ```
 
+### `range(size)`
+
+Returns an array of `size` filled with indexes
+
+```js
+range(5) // => [0, 1, 2, 3, 4]
+```
+
 ### `when(...kvs)`
+
+TODO: not sure of API for this one, going to improve it later
 
 ### `match(data, kvs)`
 
+TODO: not sure of API for this one, going to improve it later
+
 ## Functions
 
-### `using(...values)`
+### `using(...values, fn)`
+
+Use multiple unnamed expressions in a function, which allows local naming without `let`.
+
+```js
+using(1 + 1, 3 * 4, (v1, v2) => v1 * v2) // => 24
+```
 
 ### `call(data, fnName, ...args)`
 
+Returns `data[fnName](...args)`
+
+```js
+call(["a", "b", "c"], "slice", -2) // => ["b", "c"]
+```
+
 ### `defer(fn, ...args)`
 
+Simplify callbacks that use data as first arg
+
+```js
+map(array, value => get(value, 'key'))
+// becomes
+map(array, defer(get, 'key'))
+```
+
+If you alias `defer` to `_`, you can write
+
+```js
+map(array, _(get, 'key'))
+```
+
 ### `pipe(data, fns)`
+
+Apply `fns` to `data` successively
+
+```js
+// get admin user names
+pipe(users, [
+  _(filter, _(get, 'isAdmin', false)),
+  _(map,    _(get, 'name'))
+])
+```

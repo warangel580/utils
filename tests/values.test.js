@@ -1,4 +1,4 @@
-const { or, when, match, size } = require('../src/utils')
+const { or, when, match, size, range } = require('../src/utils')
 
 describe("or", () => {
   it("can be used as a default value enforcing", function () {
@@ -22,6 +22,13 @@ describe("or", () => {
   it("returns the first filled data", function () {
     expect(or([], [1]))     .toStrictEqual([1]);
     expect(or({}, { a: 1 })).toStrictEqual({ a: 1 });
+  });
+});
+
+
+describe("range", () => {
+  it("generates an n sized-array of indexes", function () {
+    expect(range(5)).toStrictEqual([0, 1, 2, 3, 4]);
   });
 });
 
