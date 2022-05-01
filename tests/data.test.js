@@ -1,5 +1,4 @@
 const { keys, values, entries, size, sort, randomIn, randomEntryIn, randomKeyIn } = require('../src/utils')
-const sinon = require("sinon");
 
 describe("keys", () => {
   it("returns array indexes", function () {

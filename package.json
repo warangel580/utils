@@ -9,6 +9,9 @@
     "type": "git",
     "url": "git+https://github.com/warangel580/utils.git"
   },
+  "files": [
+    "src"
+  ],
   "scripts": {
     "dev": "jest --colors --watch",
     "test": "jest --colors",
