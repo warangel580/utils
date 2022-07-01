@@ -262,15 +262,16 @@ let pushLast       = _pushLast({ safe: true  })
 let pushLastUnsafe = _pushLast({ safe: false })
 
 let popFirst = (data) => {
-  return using(or(data, []), ([first, ...rest]) => {
+  return using(data || [], ([first, ...rest]) => {
     return [first, rest];
   });
 }
 
 let popLast = (data) => {
-  return using(or(copy(data), []), (data) => {
-    let tail = data.pop();
-    return [tail, data];
+  return using(data || [], (data) => {
+    return using(data.slice(-1)[0], data.slice(0, -1), (last, rest) => {
+      return [last, rest];
+    });
   });
 }
 

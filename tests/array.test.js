@@ -1,4 +1,7 @@
-const { pushFirst, pushFirstUnsafe, pushLast, pushLastUnsafe, popFirst, popLast, concat, partition, toPairs } = require('../src/utils')
+const {
+  pushFirst, pushFirstUnsafe,
+  pushLast, pushLastUnsafe,
+  popFirst, popLast, concat, partition, toPairs } = require('../src/utils')
 
 describe("pushFirst", () => {
   it("adds a value at the end of an array", function () {
