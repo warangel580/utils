@@ -205,12 +205,18 @@ parseJson('{invalid json}') // => {}
 parseJson('{invalid json}', undefined) // => undefined
 ```
 
-### `toJson(data)`
+### `toJson(data, pretty = false, replacer = null)`
 
-Transforms data into JSON representation
+Transforms data into JSON representation.
+
+`pretty` can be a number, which is the number of spaces used for indentation (2 by default if `pretty === true`)
 
 ```js
 toJson({foo: "bar"})  // => '{"foo":"bar"}'
+toJson({a: 1, b: 2}, true)  /* => '{
+  "a": 1,
+  "b": 2
+}' */
 ```
 
 ### `tryCatch(fn, onCatch)`

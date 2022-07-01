@@ -103,8 +103,12 @@ let parseJson = (raw, defaultValue = {}) => {
     : raw;
 }
 
-let toJson = (data) => {
-  return JSON.stringify(data);
+let toJson = (data, pretty = false, replacer = null) => {
+  let spaces = pretty
+    ? (pretty === true ? 2 : pretty)
+    : null;
+
+  return JSON.stringify(data, replacer, spaces);
 }
 
 let clone = (data) => {

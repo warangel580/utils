@@ -133,6 +133,7 @@ describe("parseJson", () => {
 
   it("defaults to empty object if json is invalid", function () {
     expect(parseJson("{invalid}")).toStrictEqual({});
+    expect(parseJson("[invalid]")).toStrictEqual({});
   });
 
   it("uses defaultValue if json is invalid", function () {
@@ -142,7 +143,13 @@ describe("parseJson", () => {
 
 describe("toJson", () => {
   it("parses a valid json string", function () {
-    expect(toJson({ a: 1, b: 2 })).toStrictEqual('{"a":1,"b":2}');
+    expect(toJson({ a: 1, b: 2 }))       .toStrictEqual('{"a":1,"b":2}');
+    expect(toJson({ a: 1, b: 2 }, false)).toStrictEqual('{"a":1,"b":2}');
+  });
+
+  it("makes a valid json string pretty", function () {
+    expect(toJson({ a: 1, b: 2 }, true)).toStrictEqual(JSON.stringify({ a: 1, b: 2 }, null, 2));
+    expect(toJson({ a: 1, b: 2 }, 4))   .toStrictEqual(JSON.stringify({ a: 1, b: 2 }, null, 4));
   });
 
   it("defaults to empty object if json is invalid", function () {
