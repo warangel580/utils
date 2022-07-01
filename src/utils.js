@@ -13,7 +13,7 @@ let isArray = (data) => {
 }
 
 let isObject = (data) => {
-  return ! isNil(data) 
+  return ! isNil(data)
       && ! isArray(data)
       && ! isFunction(data)
       && typeof data === "object"
@@ -52,7 +52,7 @@ let map = (data, fn) => {
       return setUnsafe(object, key, fn(value, key, data));
     });
   }
-  
+
   return data;
 }
 
@@ -60,7 +60,7 @@ let filter = (data, fn) => {
   if (isArray(data)) {
     return data.filter(fn);
   }
-  
+
   if (isIterable(data)) {
     return transform({}, data, (object, value, key) => {
       return fn(value, key, data)
@@ -187,7 +187,7 @@ let values = (data) => {
 
 let size = (data) => {
   return isIterable(data)
-    ? get(keys(data), 'length')
+    ? (isArray(data) ? data.length : Object.keys(data).length)
     : undefined;
 }
 
@@ -328,13 +328,13 @@ let merge = (...datas) => {
 
 let or = (...values) => {
   let rank = (value) => {
+    let _size = size(value);
+
     if (value === undefined) return 0;
     if (value === null) return 1;
     if (value === false) return 2;
-    // []
-    if (isArray(value) && size(value) === 0) return 3;
-    // {}
-    if (isObject(value) && size(value) === 0) return 3;
+    if (isArray (value) && _size === 0) return 3; // []
+    if (isObject(value) && _size === 0) return 3; // {}
     if (!value) return 4;
     if (value === true) return 5;
     if (value) return 6;
@@ -411,7 +411,7 @@ module.exports = {
   map,
   filter,
   each,
-  
+
   // Side-effects
   debug,
   tap,
@@ -420,7 +420,7 @@ module.exports = {
   tryCatch,
   parseJson,
   toJson,
-  
+
   // Getters - Setters
   get,
   set, setUnsafe,
@@ -446,7 +446,7 @@ module.exports = {
 
   // Object helpers
   merge,
-  
+
   // Values helper
   or,
   range,
