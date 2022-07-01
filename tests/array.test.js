@@ -1,4 +1,4 @@
-const { pushFirst, pushFirstUnsafe, pushLast, popFirst, popLast, concat, partition, toPairs } = require('../src/utils')
+const { pushFirst, pushFirstUnsafe, pushLast, pushLastUnsafe, popFirst, popLast, concat, partition, toPairs } = require('../src/utils')
 
 describe("pushFirst", () => {
   it("adds a value at the end of an array", function () {
@@ -54,6 +54,25 @@ describe("pushLast", () => {
 
   it("uses multiple arguments", function () {
     expect(pushLast(["x"], "a", "b", "c")).toStrictEqual(["x", "a", "b", "c"]);
+  });
+});
+
+describe("pushLastUnsafe", () => {
+  it("adds a value at the end of an array", function () {
+    let oldArray = ["a"];
+    let newArray = pushLastUnsafe(oldArray, "b");
+
+    expect(newArray).toStrictEqual(["a", "b"]);
+    expect(oldArray).toStrictEqual(["a", "b"]);
+  });
+
+  it("creates an array with nil values", function () {
+    expect(pushLastUnsafe(null, "a")).toStrictEqual(["a"]);
+    expect(pushLastUnsafe(undefined, "a")).toStrictEqual(["a"]);
+  });
+
+  it("uses multiple arguments", function () {
+    expect(pushLastUnsafe(["x"], "a", "b", "c")).toStrictEqual(["x", "a", "b", "c"]);
   });
 });
 

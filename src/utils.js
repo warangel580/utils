@@ -48,10 +48,11 @@ let map = (data, fn) => {
 
   if (isObject(data)) {
     return transform({}, data, (object, value, key) => {
-      return set(object, key, fn(value, key, data));
+      // @NOTE: this can be unsafe because we create a new object
+      return setUnsafe(object, key, fn(value, key, data));
     });
   }
-
+  
   return data;
 }
 
@@ -59,11 +60,12 @@ let filter = (data, fn) => {
   if (isArray(data)) {
     return data.filter(fn);
   }
-
+  
   if (isIterable(data)) {
     return transform({}, data, (object, value, key) => {
       return fn(value, key, data)
-        ? set(object, key, value)
+        // @NOTE: this can be unsafe because we create a new object
+        ? setUnsafe(object, key, value)
         : object;
     });
   }
@@ -205,7 +207,8 @@ let sort = (data, fn) => {
       return fn(v1, v2, k1, k2)
     })
   ), (data, [key, value]) => {
-    return set(data, key, value);
+    // @NOTE: this can be unsafe because we create a new object
+    return setUnsafe(data, key, value);
   });
 }
 
@@ -245,9 +248,18 @@ let pushFirst       = _pushFirst({ safe: true  });
 let pushFirstUnsafe = _pushFirst({ safe: false });
 
 
-let pushLast = (data, ...values) => {
-  return tap(or(copy(data), []), data => data.push(...values));
+let _pushLast = (options) => {
+  let safe = get(options, 'safe', true);
+
+  return (data, ...values) => {
+    if (safe) data = copy(data)
+
+    return tap(data || [], data => data.push(...values));
+  }
 }
+
+let pushLast       = _pushLast({ safe: true  })
+let pushLastUnsafe = _pushLast({ safe: false })
 
 let popFirst = (data) => {
   return using(or(data, []), ([first, ...rest]) => {
@@ -412,7 +424,7 @@ module.exports = {
 
   // Array helpers
   pushFirst, pushFirstUnsafe,
-  pushLast,
+  pushLast, pushLastUnsafe,
   popFirst,
   popLast,
   concat,
