@@ -158,7 +158,7 @@ let _set = (options = {}) => {
       // @NOTE: using `data || {}` instead of `or(data, {})` for performance reasons on large datasets
       return tap(data || {}, data => {
         return using(path, ([head, ...tail]) => {
-          data[head] = set(data[head], tail, newValue);
+          data[head] = _set(options)(data[head], tail, newValue);
         });
       });
     })
