@@ -1,7 +1,7 @@
 {
   "name": "@warangel580/utils",
   "description": "Common operations on data without side-effects",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "author": "warangel580",
   "main": "src/utils.js",
