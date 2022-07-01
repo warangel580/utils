@@ -198,21 +198,29 @@ let entries = (data) => {
   });
 }
 
-let sort = (data, fn) => {
-  if (isArray(data)) {
-    return tap(copy(data), data => data.sort(fn));
-  }
+let _sort = (options) => {
+  let safe = get(options, 'safe', true);
 
-  return transform({}, tap(
-    entries(data),
-    entries => entries.sort(([k1, v1], [k2, v2]) => {
-      return fn(v1, v2, k1, k2)
-    })
-  ), (data, [key, value]) => {
-    // @NOTE: this can be unsafe because we create a new object
-    return setUnsafe(data, key, value);
-  });
+  return (data, fn) => {
+    if (isArray(data)) {
+      if (safe) data = copy(data)
+      return tap(data, data => data.sort(fn));
+    }
+
+    return transform({}, tap(
+      entries(data),
+      entries => entries.sort(([k1, v1], [k2, v2]) => {
+        return fn(v1, v2, k1, k2)
+      })
+    ), (data, [key, value]) => {
+      // @NOTE: this can be unsafe because we create a new object
+      return setUnsafe(data, key, value);
+    });
+  }
 }
+
+let sort       = _sort({ safe: true  })
+let sortUnsafe = _sort({ safe: false })
 
 let randomEntryIn = (data) => {
   let n = size(data);
@@ -332,7 +340,8 @@ let or = (...values) => {
     if (value) return 6;
   };
 
-  return sort(values, (v1, v2) => {
+  // @NOTE: this can be unsafe because we create a new array
+  return sortUnsafe(values, (v1, v2) => {
     return rank(v2) - rank(v1);
   })[0];
 }
@@ -421,7 +430,7 @@ module.exports = {
   keys,
   values,
   entries,
-  sort,
+  sort, sortUnsafe,
   randomIn,
   randomKeyIn,
   randomEntryIn,

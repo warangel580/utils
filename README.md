@@ -369,6 +369,16 @@ Note that object order is "temporary" (not enforced by javascript) but still use
 sort({a:1, b:7, c:4}, (v1, v2) => v2 - v1) // => {b:7, c:4, a:1}
 ```
 
+### `sortUnsafe(data, comparator)`
+
+Like `sortUnsafe` but doesn't copy data before sorting it, which is way faster on large datasets.
+
+You have the responsability to copy data if you need to avoid side-effects.
+
+```js
+sortUnsafe({a:1, b:7, c:4}, (v1, v2) => v2 - v1) // => {b:7, c:4, a:1}
+```
+
 ## Arrays
 
 ### `pushLast(data, ...values)`

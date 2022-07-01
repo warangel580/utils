@@ -1,4 +1,4 @@
-const { keys, values, entries, size, sort, randomIn, randomEntryIn, randomKeyIn } = require('../src/utils')
+const { keys, values, entries, size, sort, sortUnsafe, randomIn, randomEntryIn, randomKeyIn } = require('../src/utils')
 
 describe("keys", () => {
   it("returns array indexes", function () {
@@ -86,6 +86,24 @@ describe("sort", () => {
 
     expect(entries(newObject)).toStrictEqual(entries({b: 7, c: 5, a: 3}));
     expect(entries(oldObject)).toStrictEqual(entries({a: 3, b: 7, c: 5}));
+  });
+});
+
+describe("sortUnsafe", () => {
+  it("can sort arrays", function () {
+    let oldArray = [3, 7, 5];
+    let newArray = sortUnsafe(oldArray, (v1, v2) => v2 - v1);
+
+    expect(newArray).toStrictEqual([7, 5, 3]);
+    expect(oldArray).toStrictEqual([7, 5, 3]); // <= careful !
+  });
+
+  it("can sort objects", function () {
+    let oldObject = { a: 3, b: 7, c: 5 };
+    let newObject = sortUnsafe(oldObject, (v1, v2) => v2 - v1);
+
+    expect(entries(newObject)).toStrictEqual(entries({ b: 7, c: 5, a: 3 }));
+    expect(entries(oldObject)).toStrictEqual(entries({ a: 3, b: 7, c: 5 }));
   });
 });
 
