@@ -264,6 +264,26 @@ user /* => {
 } */
 ```
 
+### `setUnsafe(data, path, newValue)`
+
+Like `set` but doesn't copy data before editing it, which is way faster on large datasets.
+
+You have the responsability to copy data if you need to avoid side-effects.
+
+```js
+let before = {};
+
+after = setUnsafe(before, 'foo', 'bar');
+
+before /* => {
+  foo: "bar",
+} */
+
+after /* => {
+  foo: "bar",
+} */
+```
+
 ### Data
 
 ### `size(data)`
@@ -484,14 +504,14 @@ If you alias `defer` to `_`, you can write
 map(array, _(get, 'key'))
 ```
 
-### `pipe(data, fns)`
+### `pipe(data, ...fns)`
 
 Apply `fns` to `data` successively
 
 ```js
 // get admin user names
-pipe(users, [
+pipe(users,
   _(filter, _(get, 'isAdmin', false)),
   _(map,    _(get, 'name'))
-])
+)
 ```

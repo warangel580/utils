@@ -143,19 +143,30 @@ let get = (data, path, notFoundValue) => {
   return get(data[head], tail, notFoundValue);
 }
 
-let set = (data, path, newValue) => {
-  return using(copy(data), _normalizePath(path), (data, path) => {
-    if (path.length === 0) {
-      return isFunction(newValue) ? newValue(data) : newValue;
-    }
-  
-    return tap(or(data, {}), data => {
-      return using(path, ([head, ...tail]) => {
-        data[head] = set(data[head], tail, newValue);
+
+let _set = (options = {}) => {
+  let safe = get(options, 'safe', true)
+
+  return (data, path, newValue) => {
+    if (safe) data = copy(data);
+
+    return using(data, _normalizePath(path), (data, path) => {
+      if (path.length === 0) {
+        return isFunction(newValue) ? newValue(data) : newValue;
+      }
+
+      // @NOTE: using `data || {}` instead of `or(data, {})` for performance reasons on large datasets
+      return tap(data || {}, data => {
+        return using(path, ([head, ...tail]) => {
+          data[head] = set(data[head], tail, newValue);
+        });
       });
-    });
-  });
+    })
+  }
 }
+
+let set       = _set({ safe: true  });
+let setUnsafe = _set({ safe: false });
 
 // Data helpers
 
@@ -378,6 +389,7 @@ module.exports = {
   // Getters - Setters
   get,
   set,
+  setUnsafe,
 
   // Data helpers
   size,
