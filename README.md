@@ -387,6 +387,16 @@ Pure version of `Array.unshift`
 pushFirst(["a"], "b", "c") // => ["b", "c", "a"]
 ```
 
+### `pushFirstUnsafe(data, ...values)`
+
+Like `pushFirst` but doesn't copy data before editing it, which is way faster on large datasets.
+
+You have the responsability to copy data if you need to avoid side-effects.
+
+```js
+pushFirst(["a"], "b", "c") // => ["b", "c", "a"]
+```
+
 ### `popFirst(data)`
 
 Pure version of `Array.pop`, returns `[firstElement, ...otherElements]`

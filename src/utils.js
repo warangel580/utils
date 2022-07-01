@@ -231,9 +231,19 @@ let randomKeyIn = (data) => {
 
 // Array helpers
 
-let pushFirst = (data, ...values) => {
-  return tap(or(copy(data), []), data => data.unshift(...values));
+let _pushFirst = (options) => {
+  let safe = get(options, 'safe', true);
+
+  return (data, ...values) => {
+    if (safe) data = copy(data)
+
+    return tap(data || [], data => data.unshift(...values));
+  }
 }
+
+let pushFirst       = _pushFirst({ safe: true  });
+let pushFirstUnsafe = _pushFirst({ safe: false });
+
 
 let pushLast = (data, ...values) => {
   return tap(or(copy(data), []), data => data.push(...values));
@@ -388,8 +398,7 @@ module.exports = {
   
   // Getters - Setters
   get,
-  set,
-  setUnsafe,
+  set, setUnsafe,
 
   // Data helpers
   size,
@@ -402,7 +411,7 @@ module.exports = {
   randomEntryIn,
 
   // Array helpers
-  pushFirst,
+  pushFirst, pushFirstUnsafe,
   pushLast,
   popFirst,
   popLast,
