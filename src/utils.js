@@ -156,8 +156,7 @@ let _set = (options = {}) => {
       if (path.length === 0) {
         return isFunction(newValue) ? newValue(data) : newValue;
       }
-
-      // @NOTE: using `data || {}` instead of `or(data, {})` for performance reasons on large datasets
+      
       return tap(data || {}, data => {
         return using(path, ([head, ...tail]) => {
           data[head] = _set(options)(data[head], tail, newValue);
@@ -277,7 +276,7 @@ let popLast = (data) => {
 
 let concat = (...datas) => {
   return transform([], datas, (data, d) => {
-    return data.concat(or(d, []));
+    return data.concat(d || []);
   })
 }
 
@@ -306,7 +305,7 @@ let merge = (...datas) => {
   if (isFunction(fn)) {
     let [object, otherObjects] = popFirst(objects);
 
-    return transform(or(object, {}), otherObjects, fn);
+    return transform(object || {}, otherObjects, fn);
   }
 
   return transform({}, datas, (current, next) => {
