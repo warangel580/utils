@@ -156,7 +156,7 @@ let _set = (options = {}) => {
       if (path.length === 0) {
         return isFunction(newValue) ? newValue(data) : newValue;
       }
-      
+
       return tap(data || {}, data => {
         return using(path, ([head, ...tail]) => {
           data[head] = _set(options)(data[head], tail, newValue);
@@ -173,13 +173,15 @@ let setUnsafe = _set({ safe: false });
 
 let keys = (data) => {
   return transform([], data, (keys, _, key) => {
-    return pushLast(keys, key);
+    // @NOTE: this can be unsafe because we create a new array
+    return pushLastUnsafe(keys, key);
   });
 }
 
 let values = (data) => {
   return transform([], data, (keys, value) => {
-    return pushLast(keys, value);
+    // @NOTE: this can be unsafe because we create a new array
+    return pushLastUnsafe(keys, value);
   });
 }
 
@@ -191,7 +193,8 @@ let size = (data) => {
 
 let entries = (data) => {
   return transform([], data, (entries, value, key) => {
-    return pushLast(entries, [key, value]);
+    // @NOTE: this can be unsafe because we create a new array
+    return pushLastUnsafe(entries, [key, value]);
   });
 }
 
@@ -362,7 +365,8 @@ let match = (value, ...kvs) => {
   });
 
   return when(...transform([], pairs, (kvs, [key, value]) => {
-    return pushLast(kvs, key, value);
+    // @NOTE: this can be unsafe because we create a new array
+    return pushLastUnsafe(kvs, key, value);
   }))
 }
 
@@ -424,7 +428,7 @@ module.exports = {
 
   // Array helpers
   pushFirst, pushFirstUnsafe,
-  pushLast, pushLastUnsafe,
+  pushLast,  pushLastUnsafe,
   popFirst,
   popLast,
   concat,
