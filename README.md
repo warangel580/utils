@@ -515,3 +515,7 @@ pipe(users,
   _(map,    _(get, 'name'))
 )
 ```
+
+## Updating package
+
+- https://zellwk.com/blog/publish-to-npm/ (just use `np`)
