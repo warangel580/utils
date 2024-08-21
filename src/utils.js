@@ -79,6 +79,22 @@ let each = function (data, fn) {
   });
 }
 
+let eachSync = async function (data, callback) {
+  if (data instanceof Array) {
+    for (let index in data) {
+      // +index = parseNumber(index)
+      await callback(data[index], +index);
+    }
+    return;
+  }
+
+  for (let key in data) {
+    if (! data.hasOwnProperty(key)) continue;
+
+    await callback(data[key], key, data);
+  }
+}
+
 // Side-effects
 
 let copy = (data) => {
@@ -415,6 +431,7 @@ module.exports = {
   map,
   filter,
   each,
+  eachSync,
 
   // Side-effects
   debug,

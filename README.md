@@ -155,6 +155,20 @@ each({a: 1, b: 2, c: 3}, log) // logs(1) then (2), (3)
 each(null,               log) // (nothing happens)
 ```
 
+### `eachSync(data, async fn)`
+
+Like `each` but works with promises sequentially.
+
+Iterates on data by doing `fn(value, key, data)`
+
+If `data` is not iterable, it returns `data`.
+
+```js
+const apiSaveUser = async (user) => await Api.saveUser(user);
+
+eachSync([user1, user2, user3], apiSaveUser) // saves user (1) then (2), then (3) (not at the same time)
+```
+
 ## Side-effects
 
 ### `debug(data, ...rest)`

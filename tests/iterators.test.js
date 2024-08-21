@@ -1,4 +1,4 @@
-const { reduce, transform, map, filter, each } = require("../src/utils");
+const { reduce, transform, map, filter, each, eachSync } = require("../src/utils");
 const sinon = require("sinon");
 
 describe("reduce", () => {
@@ -93,5 +93,39 @@ describe("each", () => {
     each(undefined, callback);
 
     expect(callback.called).toBe(false);
+  });
+});
+
+describe('eachSync', function () {
+  it('behaves like a synchronous Array.each on arrays', async function () {
+    let calls = [];
+
+    await eachSync([5, 10, 15], async (v, i) => {
+      // Each call is shorter so we can test that it's made in correct order
+      let res = await new Promise(resolve => setTimeout(() => resolve([v, i]), 15 - v))
+
+      calls.push(res);
+    });
+
+    // Checking that calls were made in order
+    expect(calls).toStrictEqual([[5, 0], [10, 1], [15, 2]])
+  });
+
+  it('behaves like a synchronous Array.each on objects too', async function () {
+    let calls = [];
+
+    await eachSync({"5": "foo", "10": "bar", "15": "baz"}, async (v, k, o) => {
+      // Each call is shorter so we can test that it's made in correct order
+      let res = await new Promise(resolve => setTimeout(() => resolve([v,k,o]), 15 - k))
+
+      calls.push(res);
+    });
+
+    // Checking that calls were made in order
+    expect(calls).toStrictEqual([
+      ["foo", "5",  {"5": "foo", "10": "bar", "15": "baz"}],
+      ["bar", "10", {"5": "foo", "10": "bar", "15": "baz"}],
+      ["baz", "15", {"5": "foo", "10": "bar", "15": "baz"}]
+    ]);
   });
 });
