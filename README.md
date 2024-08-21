@@ -501,7 +501,8 @@ Returns the "most truthy" value given, useful for default values
 
 ```js
 or(undefined, [])          // => []
-or({a: 1},    {})          // => {}
+or(null, {a: 1}, {})       // => {a: 1}
+or(null, false, true)      // => true
 or(undefined, null, "foo") // => "foo"
 ```
 
